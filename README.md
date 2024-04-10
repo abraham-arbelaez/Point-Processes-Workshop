@@ -1,1 +1,1 @@
-# Point-Processes-Workshop
+# Spatial Point Processes Workshop
