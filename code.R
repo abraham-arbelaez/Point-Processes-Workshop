@@ -147,13 +147,14 @@ plot(r)
 points(points[,1], points[,2], pch = 16)
 
 
-
-##########
+#########################################
+### REAL LIFE DATA
+#########################################
 
 library(sp)
 library(leaflet)
 library(oce) # utm to lonlat
-
+library(tidyverse)
 
 # GRASSHOPPER SPARROW!
 CBS011 <- read.csv("https://raw.githubusercontent.com/abraham-arbelaez/Point-Processes-Workshop/main/CBS011.csv")
@@ -178,6 +179,35 @@ leaflet(locations) %>%
                    color = "#512888") %>% 
   addTiles()
 
-url.nlcd <- "https://www.dropbox.com/scl/fi/ew7yzm93aes7l8l37cn65/KS_2011_NLCD.img?rlkey=60ahyvxhq18gt0yr47tuq5fig&dl=1"
-rl.nlcd2011 <- raster(url.nlcd)
-plot(rl.nlcd2011)
+
+## INTENSITY FUNCTION WITH ONLY KERNEL DENSITY ESTIMATORS
+
+# heat map
+ggplot() +
+  stat_density_2d(data = GRSP, 
+                  mapping = aes(x = purrr::map_dbl(geometry, ~.[1]),
+                                y = purrr::map_dbl(geometry, ~.[2]),
+                                fill = stat(density)),
+                  geom = 'tile',
+                  contour = FALSE,
+                  alpha = 0.8) +
+  scale_fill_viridis_c(option = 'magma', direction = -1) +
+  xlab("Longitude") +
+  ylab("Latitude")+
+  theme_test()
+
+# heat map with points
+ggplot() +
+  stat_density_2d(data = GRSP, 
+                  mapping = aes(x = purrr::map_dbl(geometry, ~.[1]),
+                                y = purrr::map_dbl(geometry, ~.[2]),
+                                fill = stat(density)),
+                  geom = 'tile',
+                  contour = FALSE,
+                  alpha = 0.8) +
+  geom_sf(data = GRSP, color = 'red', size = 0.1) + 
+  scale_fill_viridis_c(option = 'magma', direction = -1) +
+  xlab("Longitude") +
+  ylab("Latitude")+
+  theme_test()
+
